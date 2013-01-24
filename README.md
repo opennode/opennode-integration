@@ -1,4 +1,4 @@
 opennode-integration
 ====================
 
-OpenNode integration tests
+OpenNode integration test suite
