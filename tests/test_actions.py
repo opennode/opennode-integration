@@ -14,7 +14,12 @@ class SshTestCase(unittest.TestCase):
             return e.output
 
     def check_call_ssh(self, omsh_cmd):
-        return subprocess.check_call(['ssh', self.login, '-p', '6022'] + omsh_cmd)
+        try:
+            return subprocess.check_call(['ssh', self.login, '-p', '6022'] + omsh_cmd)
+        except subprocess.CalledProcessError as e:
+            if e.returncode != 255:
+                raise
+            return e.returncode
 
     def assert_vm_template(self, compute, template_name):
         assert self.check_output_ssh(['ls', '/machines/by-name/%(compute)s'
@@ -23,7 +28,8 @@ class SshTestCase(unittest.TestCase):
 
     def assert_vm(self, compute):
         vmlist = self.check_output_ssh(['ls', '/machines/by-name/'])
-        assert compute in vmlist[0], 'Compute \'%s\' not found in OMS VM list (%s)' % (compute, vmlist)
+        vmlist = map(lambda x: x[7:-5], vmlist.split())
+        assert compute in vmlist, 'Compute \'%s\' not found in OMS VM list %s' % (compute, vmlist)
 
     def _check_preconditions_for_allocate(self):
         # 1. assert that we have 2 VMs ready
@@ -39,5 +45,8 @@ class SshTestCase(unittest.TestCase):
     def test_allocate_ssh(self):
         self._check_preconditions_for_allocate()
         # 3. create a Compute under hangar with that template
-        
+        self.check_call_ssh(['cd /machines/hangar/vms-openvz; '
+                             'mk hostname=testvm1 template=oms-test-template'])
         # 4. execute the action, assert expectations
+        self.check_call_ssh(['/machines/hangar/vms-openvz/by-name/testvm1/actions/allocate'])
+        self.assert_vm('testvm1')
