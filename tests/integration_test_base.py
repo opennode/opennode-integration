@@ -8,23 +8,22 @@ class IntegrationTestRestMixin(object):
     def assert_rest(self, path, method='get', data=None):
         method = getattr(requests, method)
         r = method('%s%s' % ('http://%s:8080' % self.host, path), data=data)
-        self.assertEqual(200, r.status_code)
+        r.raise_for_status()
         data = r.json()
-        self.assertEqual(True, data['success'])
+        if 'success' in data:
+            self.assertEqual(True, data['success'])
 
     def assert_vm_rest(self, compute):
-        r = requests.get('%s/machines/by-name/%s' % (self.base_address, compute))
-        self.assertEqual(200, r.status_code)
+        r = requests.get('http://%s:8080/machines/by-name/%s' % (self.host, compute))
+        r.raise_for_status()
         data = r.json()
-        self.assertEqual(True, data['success'])
         self.assertEqual(compute, data['hostname'])
 
     def assert_vm_template_rest(self, compute, template):
         r = requests.get('%s/machines/by-name/%s/templates/by-name/%s' %
                          (self.base_address, compute, template))
-        self.assertEqual(200, r.status_code)
+        r.raise_for_status()
         data = r.json()
-        self.assertEqual(True, data['success'])
         self.assertEqual(template, data['name'])
 
 
