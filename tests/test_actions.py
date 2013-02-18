@@ -46,6 +46,18 @@ class ActionsSshTestCase(unittest.TestCase):
             self.assert_vm(c)
             self.assert_vm_template(c, 'oms-test-template')
 
+    def cleanup(self):
+        itemlist = self.check_output_ssh(['ls', '/machines/hangar/vms-openvz/'])
+        itemlist = map(lambda x: x[7:-5], itemlist.split())
+
+        for item in itemlist:
+            if item not in ('actions', 'by-name'):
+                self.check_call_ssh(['rm', '/machines/hangar/vms-openvz/%s' % (item)])
+
+        itemlist = self.check_output_ssh(['ls', '/machines/hangar/vms-openvz/by-name/'])
+        itemlist = map(lambda x: x[7:-5], itemlist.split())
+        assert 'testvm1' not in itemlist, 'Found \'%s\' in list %s' % ('testvm1', itemlist)
+
     def test_allocate(self):
         self._check_preconditions_for_allocate()
         self.check_call_ssh(['cd /machines/hangar; mk virtualizationcontainer backend=openvz'])
@@ -59,14 +71,3 @@ class ActionsSshTestCase(unittest.TestCase):
         self.assert_vm('testvm1')
         self.cleanup()
 
-    def cleanup(self):
-        itemlist = self.check_output_ssh(['ls', '/machines/hangar/vms-openvz/'])
-        itemlist = map(lambda x: x[7:-5], itemlist.split())
-
-        for item in itemlist:
-            if item not in ('actions', 'by-name'):
-                self.check_call_ssh(['rm', '/machines/hangar/vms-openvz/%s' % (item)])
-
-        itemlist = self.check_output_ssh(['ls', '/machines/hangar/vms-openvz/by-name/'])
-        itemlist = map(lambda x: x[7:-5], itemlist.split())
-        assert 'testvm1' not in itemlist, 'Found \'%s\' in list %s' % ('testvm1', itemlist)
