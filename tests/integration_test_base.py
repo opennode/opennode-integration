@@ -14,7 +14,7 @@ class IntegrationTestRestMixin(object):
             self.assertEqual(True, data['success'])
 
     def assert_vm_rest(self, compute):
-        r = requests.get('http://%s:8080/machines/by-name/%s' % (self.host, compute))
+        r = requests.get('http://%s:8080/computes/by-name/%s?depth=1&attrs=hostname' % (self.host, compute))
         r.raise_for_status()
         data = r.json()
         self.assertEqual(compute, data['hostname'])

@@ -26,5 +26,4 @@ class ActionsHttpRestTestCase(BaseIntegrationTest, IntegrationTestRestMixin):
                                           'root_password_repeat': 'opennode',
                                           'start_on_boot': 'false'}))
         self.assert_rest('/machines/hangar/vms-openvz/by-name/testvm1rest/actions/allocate', method='put')
-        self.assert_vm('testvm1rest')
         self.assert_vm_rest('testvm1rest')
