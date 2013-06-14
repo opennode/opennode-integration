@@ -18,20 +18,18 @@ class ActionsHttpRestTestCase(BaseIntegrationTest, IntegrationTestRestMixin):
         self._check_preconditions_for_allocate()
         self.assert_rest('/machines/hangar', method='post', data=json.dumps({'backend': 'openvz'}),
                          auth=self.auth)
-        self.assert_path('/machines/hangar', 'vms-openvz', auth=self.auth)
-        self.assert_rest('/machines/hangar/vms-openvz', method='get', auth=self.auth)
+        self.assert_path('/machines/hangar', 'vms-openvz')
+        self.assert_rest('/machines/hangar/vms-openvz', method='get')
         self.assert_rest('/machines/hangar/vms-openvz', method='post',
                          data=json.dumps({'hostname': 'test1rest',
                                           'template': 'oms-test-template',
                                           'root_password': 'opennode',
                                           'root_password_repeat': 'opennode',
-                                          'start_on_boot': 'false'}), auth=self.auth)
-        self.assert_rest('/machines/hangar/vms-openvz/by-name/testvm1rest/actions/allocate',
-                         method='put', auth=self.auth)
-        self.assert_vm_rest('test1rest', auth=self.auth)
-        self.assert_rest('test1rest', auth=self.auth)
+                                          'start_on_boot': 'false'}))
+        self.assert_rest('/machines/hangar/vms-openvz/by-name/testvm1rest/actions/allocate', method='put')
+        self.assert_vm_rest('test1rest')
         self.assertRaises(AssertionError, self.assert_rest, '/machines/hangar/vms-openvz/by-name/test1rest',
-                          method='get', auth=self.auth)
+                          method='get')
 
     def test_deploy(self):
         assert False, 'TODO: write deployment integration test!'

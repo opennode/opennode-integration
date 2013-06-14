@@ -8,39 +8,45 @@ class IntegrationTestRestMixin(object):
 
     def assert_rest(self, path, method='get', data=None, auth=None):
         method = getattr(requests, method)
-        r = method('%s%s' % ('http://%s:8080' % self.host, path), data=data, auth=auth)
+        r = method('http://%s:8080%s' % (self.host, path), data=data,
+                   auth=(auth or getattr(self, 'auth', None)))
         r.raise_for_status()
         data = r.json()
         if 'success' in data:
             self.assertEqual(True, data['success'])
+        return data
 
     def assert_vm_rest(self, compute, auth=None):
         r = requests.get('http://%s:8080/computes/by-name/%s?depth=1&attrs=hostname' % (self.host, compute),
-                         auth=auth)
+                         auth=(auth or getattr(self, 'auth')))
         r.raise_for_status()
         data = r.json()
         self.assertEqual(compute, data['hostname'])
+        return data
 
     def assert_no_vm_rest(self, compute, auth=None):
         r = requests.get('http://%s:8080/computes/by-name/%s?depth=1&attrs=hostname' % (self.host, compute),
-                         auth=auth)
+                         auth=(auth or getattr(self, 'auth')))
         assert r.status_code is 404, 'Compute %s is visible in computes!' % (compute)
 
     def assert_hangar_compute_rest(self, compute, auth=None):
         r = requests.get('http://%s:8080/machines/hangar/by-name/%s?depth=1&attrs=hostname'
-                         % (self.host, compute), auth=auth)
+                         % (self.host, compute),
+                         auth=(auth or getattr(self, 'auth')))
         r.raise_for_status()
         data = r.json()
         self.assertEqual(compute, data['hostname'])
 
     def assert_no_hangar_compute_rest(self, compute, auth=None):
         r = requests.get('http://%s:8080/machines/hangar/by-name/%s?depth=1&attrs=hostname'
-                         % (self.host, compute), auth=auth)
+                         % (self.host, compute),
+                         auth=(auth or getattr(self, 'auth')))
         assert r.status_code is 404, 'Compute %s is visible in hangar!' % (compute)
 
     def assert_vm_template_rest(self, compute, template, auth=None):
         r = requests.get('%s/machines/by-name/%s/templates/by-name/%s' %
-                         (self.base_address, compute, template), auth=auth)
+                         (self.base_address, compute, template),
+                         auth=(auth or getattr(self, 'auth')))
         r.raise_for_status()
         data = r.json()
         self.assertEqual(template, data['name'])
