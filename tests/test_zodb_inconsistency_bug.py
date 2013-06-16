@@ -28,8 +28,8 @@ class ActionsHttpRestTestCase(BaseIntegrationTest, IntegrationTestRestMixin):
 
     def test_createvm(self):
         self.template_name = self.get_template(self.auth)
-        hostnamebase = 'test%s'
-        hostcount = 101
+        hostnamebase = 'test%04d'
+        hostcount = 1
 
         self.assert_rest('/machines/hangar/vms-openvz', method='get')
         while True:
