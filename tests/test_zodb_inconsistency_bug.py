@@ -5,6 +5,7 @@ import time
 
 from integration_test_base import BaseIntegrationTest, IntegrationTestRestMixin
 
+log = logging.getLogger(__name__)
 
 class ActionsHttpRestTestCase(BaseIntegrationTest, IntegrationTestRestMixin):
 
@@ -33,7 +34,7 @@ class ActionsHttpRestTestCase(BaseIntegrationTest, IntegrationTestRestMixin):
 
         self.assert_rest('/machines/hangar/vms-openvz', method='get')
         while True:
-            logging.info('Creating %s', hostnamebase % hostcount)
+            log.info('Creating %s', hostnamebase % hostcount)
             data = self.assert_rest('/machines/hangar/vms-openvz', method='post',
                                     data=json.dumps({'hostname': hostnamebase % hostcount,
                                                      'template': self.template_name,
@@ -52,7 +53,7 @@ class ActionsHttpRestTestCase(BaseIntegrationTest, IntegrationTestRestMixin):
                     result_array.append(True)
                 except Exception:
                     result_array.append(False)
-                    time.sleep(1)
+                    time.sleep(0.1)
 
             previous = None
             count = 0
@@ -65,8 +66,8 @@ class ActionsHttpRestTestCase(BaseIntegrationTest, IntegrationTestRestMixin):
                 try:
                     self.assert_rest(testurl, method='delete')
                 except requests.models.HTTPError:
-                    print 'Delete attempt failed:', i, uuid, hostnamebase % hostcount
-                    time.sleep(1)
+                    log.warning('Delete attempt failed: %s %s %s', i, uuid, hostnamebase % hostcount)
+                    time.sleep(0.1)
                 else:
                     break
 
