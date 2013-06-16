@@ -8,7 +8,7 @@ class IntegrationTestRestMixin(object):
 
     def assert_rest(self, path, method='get', data=None, auth=None):
         method = getattr(requests, method)
-        r = method('http://%s:8080%s' % (self.host, path), data=data,
+        r = method('http://%s%s' % (self.host, path), data=data,
                    auth=(auth or getattr(self, 'auth', None)))
         r.raise_for_status()
         data = r.json()
@@ -17,7 +17,7 @@ class IntegrationTestRestMixin(object):
         return data
 
     def assert_vm_rest(self, compute, auth=None):
-        r = requests.get('http://%s:8080/computes/by-name/%s?depth=1&attrs=hostname' % (self.host, compute),
+        r = requests.get('http://%s/computes/by-name/%s?depth=1&attrs=hostname' % (self.host, compute),
                          auth=(auth or getattr(self, 'auth')))
         r.raise_for_status()
         data = r.json()
@@ -25,12 +25,12 @@ class IntegrationTestRestMixin(object):
         return data
 
     def assert_no_vm_rest(self, compute, auth=None):
-        r = requests.get('http://%s:8080/computes/by-name/%s?depth=1&attrs=hostname' % (self.host, compute),
+        r = requests.get('http://%s/computes/by-name/%s?depth=1&attrs=hostname' % (self.host, compute),
                          auth=(auth or getattr(self, 'auth')))
         assert r.status_code is 404, 'Compute %s is visible in computes!' % (compute)
 
     def assert_hangar_compute_rest(self, compute, auth=None):
-        r = requests.get('http://%s:8080/machines/hangar/by-name/%s?depth=1&attrs=hostname'
+        r = requests.get('http://%s/machines/hangar/by-name/%s?depth=1&attrs=hostname'
                          % (self.host, compute),
                          auth=(auth or getattr(self, 'auth')))
         r.raise_for_status()
@@ -38,7 +38,7 @@ class IntegrationTestRestMixin(object):
         self.assertEqual(compute, data['hostname'])
 
     def assert_no_hangar_compute_rest(self, compute, auth=None):
-        r = requests.get('http://%s:8080/machines/hangar/by-name/%s?depth=1&attrs=hostname'
+        r = requests.get('http://%s/machines/hangar/by-name/%s?depth=1&attrs=hostname'
                          % (self.host, compute),
                          auth=(auth or getattr(self, 'auth')))
         assert r.status_code is 404, 'Compute %s is visible in hangar!' % (compute)
@@ -58,8 +58,9 @@ class BaseIntegrationTest(unittest.TestCase):
         self.login = config.admin_user
         self.password = config.admin_password
         self.auth = (self.login, self.password)
-        self.host = config.oms_hostname
-        self.ssh_cmd = ['ssh', '%s@%s' % (self.login, self.host), '-p', config.oms_port_ssh]
+        self.host = '%s%s' % (config.oms_hostname_http,
+                              ':' + config.oms_port_http if config.oms_port_http else '')
+        self.ssh_cmd = ['ssh', '%s@%s' % (self.login, config.oms_hostname_ssh), '-p', config.oms_port_ssh]
 
     def tearDown(self):
         self.cleanup()

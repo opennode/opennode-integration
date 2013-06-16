@@ -9,18 +9,19 @@ log = logging.getLogger(__name__)
 
 class ActionsHttpRestTestCase(BaseIntegrationTest, IntegrationTestRestMixin):
 
+    # Overload NOT to call self.cleanup()
     def tearDown(self):
         pass
 
     def get_template(self, auth=None):
-        r = requests.get('http://%s:8080/templates/by-name/?depth=1&attrs=name' % (self.host),
+        r = requests.get('http://%s/templates/by-name/?depth=1&attrs=name' % (self.host),
                          auth=auth)
         r.raise_for_status()
         data = r.json()
         return data[u'children'][0][u'name']
 
     def assert_vm_uuid_rest(self, compute, auth=None):
-        r = requests.get('http://%s:8080/computes/?depth=1&attrs=id' % (self.host),
+        r = requests.get('http://%s/computes/?depth=1&attrs=id' % (self.host),
                          auth=(auth or getattr(self, 'auth')))
         r.raise_for_status()
         data = r.json()
@@ -34,7 +35,6 @@ class ActionsHttpRestTestCase(BaseIntegrationTest, IntegrationTestRestMixin):
 
         self.assert_rest('/machines/hangar/vms-openvz', method='get')
         while True:
-            log.info('Creating %s', hostnamebase % hostcount)
             data = self.assert_rest('/machines/hangar/vms-openvz', method='post',
                                     data=json.dumps({'hostname': hostnamebase % hostcount,
                                                      'template': self.template_name,
