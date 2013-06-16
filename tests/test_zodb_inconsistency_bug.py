@@ -1,5 +1,6 @@
-import requests
 import json
+import logging
+import requests
 import time
 
 from integration_test_base import BaseIntegrationTest, IntegrationTestRestMixin
@@ -32,6 +33,7 @@ class ActionsHttpRestTestCase(BaseIntegrationTest, IntegrationTestRestMixin):
 
         self.assert_rest('/machines/hangar/vms-openvz', method='get')
         while True:
+            logging.info('Creating %s', hostnamebase % hostcount)
             data = self.assert_rest('/machines/hangar/vms-openvz', method='post',
                                     data=json.dumps({'hostname': hostnamebase % hostcount,
                                                      'template': self.template_name,
@@ -39,23 +41,36 @@ class ActionsHttpRestTestCase(BaseIntegrationTest, IntegrationTestRestMixin):
                                                      'root_password_repeat': 'opennode',
                                                      'start_on_boot': 'false'}))
 
-            uuid = data[u'result'][u'id']
-            testurl = data[u'result']['url']
+            uuid = data['result']['id']
+            testurl = data['result']['url']
+
+            result_array = []
 
             for i in range(20):
                 try:
                     self.assert_vm_uuid_rest(uuid)
+                    result_array.append(True)
                 except Exception:
-                    print 'Attempt failed:', i, uuid
+                    result_array.append(False)
+                    time.sleep(1)
 
-            self.assert_vm_uuid_rest(uuid)
+            previous = None
+            count = 0
+            for i in result_array:
+                if i is not previous:
+                    count += 1
+                previous = i
+
             for i in range(10):
                 try:
                     self.assert_rest(testurl, method='delete')
                 except requests.models.HTTPError:
-                    print 'Delete attempt failed:', i, uuid
+                    print 'Delete attempt failed:', i, uuid, hostnamebase % hostcount
                     time.sleep(1)
                 else:
                     break
 
+            assert count < 3, 'More than 2 transitions: (%s) %s (%s)\n%s' % (count, uuid,
+                                                                             hostnamebase % hostcount,
+                                                                             result_array)
             hostcount += 1
