@@ -2,6 +2,7 @@ import json
 import logging
 import requests
 import time
+import unittest
 
 from integration_test_base import BaseIntegrationTest, IntegrationTestRestMixin
 
@@ -28,6 +29,7 @@ class ActionsHttpRestTestCase(BaseIntegrationTest, IntegrationTestRestMixin):
         self.assertEqual(True, unicode(compute) in map(lambda x: x['id'], data['children']))
         return data
 
+    @unittest.skip('Enable if inconsistency is being detected in DB')
     def test_createvm(self):
         self.template_name = self.get_template(self.auth)
         hostnamebase = 'test%04d'
