@@ -1,5 +1,5 @@
 admin_user = 'admin'
-admin_password = 'opennode'
+admin_password = 'admin'
 
 user_registry = {'admin': 'opennode',
                  'a': 'a',
