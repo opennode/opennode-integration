@@ -1,6 +1,7 @@
 import requests
 import subprocess
 import unittest
+import logging
 
 import config
 
@@ -67,6 +68,8 @@ class BaseIntegrationTest(unittest.TestCase):
 
     def ssh(self, omsh_cmd):
         try:
+            command_to_run = self.ssh_cmd + omsh_cmd
+            logging.debug("Executing: %s " % command_to_run)
             p = subprocess.Popen(self.ssh_cmd + omsh_cmd,
                                  stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             p.wait()
