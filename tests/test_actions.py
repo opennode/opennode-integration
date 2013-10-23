@@ -1,3 +1,4 @@
+import config
 import subprocess
 
 from integration_test_base import BaseIntegrationTest
