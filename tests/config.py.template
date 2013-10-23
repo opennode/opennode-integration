@@ -1,0 +1,13 @@
+admin_user = '${ADMIN_USER}'
+admin_password = '${ADMIN_PASSWORD}'
+
+user_registry = {'${ADMIN_USER}': '${ADMIN_PASSWORD}',
+                 'a': 'a',
+                 'b': 'b',
+                 'c': 'c'}
+
+oms_hostname_http = '${OMS_HOSTNAME_HTTP}'
+oms_port_http = '${OMS_PORT_HTTP}'
+
+oms_hostname_ssh = '${OMS_HOSTNAME_SSH}'
+oms_port_ssh = '${OMS_PORT_SSH}'
