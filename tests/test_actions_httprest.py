@@ -1,5 +1,6 @@
 import subprocess
 import json
+import unittest
 
 from integration_test_base import BaseIntegrationTest, IntegrationTestRestMixin
 
@@ -34,8 +35,10 @@ class ActionsHttpRestTestCase(BaseIntegrationTest, IntegrationTestRestMixin):
         self.assertRaises(AssertionError, self.assert_rest, '/machines/hangar/vms-openvz/by-name/%s' % self.vm_name,
                           method='get')
 
+    @unittest.skip('TODO: write deployment integration test!')
     def test_deploy(self):
         assert False, 'TODO: write deployment integration test!'
 
+    @unittest.skip('TODO: write deployment integration test!')
     def test_undeploy(self):
         assert False, 'TODO: write deployment integration test!'
