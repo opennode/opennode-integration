@@ -8,11 +8,11 @@ class ActionsSshTestCase(BaseIntegrationTest):
         output = self.ssh(['id'])
         lines = output.splitlines()
         self.assertEquals('user:', lines[0].split(' ')[0])
-        self.assertEquals('admin', lines[0].split(' ')[1])
+        self.assertEquals(config.admin_user, lines[0].split(' ')[1])
         self.assertEquals('groups:', lines[1].split(' ')[0])
         self.assertEquals('admins', lines[1].split(' ')[1])
         self.assertEquals('effective_principals:', lines[2].split(' ')[0])
-        self.assertEquals('admin', lines[2].split(' ')[1])
+        self.assertEquals(config.admin_user, lines[2].split(' ')[1])
         self.assertEquals('admins', lines[2].split(' ')[2])
 
     def _check_preconditions_for_allocate(self):
