@@ -16,6 +16,7 @@ class IntegrationTestRestMixin(object):
                    auth=(auth or getattr(self, 'auth', None)))
         r.raise_for_status()
         data = r.json()
+        logging.debug("Response JSON: %s" % data)
         if 'success' in data:
             self.assertEqual(True, data['success'])
         return data
