@@ -1,9 +1,12 @@
+import httplib
 import requests
 import subprocess
 import unittest
 import logging
 
 import config
+
+httplib.HTTPConnection.debuglevel = 1
 
 class IntegrationTestRestMixin(object):
 
