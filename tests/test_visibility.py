@@ -4,7 +4,7 @@ import json
 from integration_test_base import BaseIntegrationTest, IntegrationTestRestMixin
 
 class VisibilityTestCase(BaseIntegrationTest, IntegrationTestRestMixin):
-
+    # Not used in this class?
     def _check_preconditions_for_allocate(self):
         vmliststr = subprocess.check_output(['virsh', 'list', '--name', '--state-running'])
         vmlist = filter(lambda s: len(s) > 0, vmliststr.splitlines())

@@ -16,7 +16,8 @@ class ActionsHttpRestTestCase(BaseIntegrationTest, IntegrationTestRestMixin):
             self.assert_vm_template(c, 'oms-test-template')
 
     def test_allocate(self):
-        self._check_preconditions_for_allocate()
+        # _check_preconditions_for_allocate() should use OMS -- virsh may be not installed
+        #self._check_preconditions_for_allocate()
         self.assert_rest('/machines/hangar', method='post', data=json.dumps({'backend': 'openvz'}),
                          auth=self.auth)
         self.assert_path('/machines/hangar', 'vms-openvz')
