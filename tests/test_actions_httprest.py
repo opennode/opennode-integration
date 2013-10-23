@@ -29,6 +29,11 @@ class ActionsHttpRestTestCase(BaseIntegrationTest, IntegrationTestRestMixin):
                                           'root_password': 'opennode',
                                           'root_password_repeat': 'opennode',
                                           'start_on_boot': 'false'}))
+
+        # TMP DEBUG
+        self.assert_path('/machines/hangar', 'vms-openvz')
+        # END OF TMP DEBUG
+
         self.assert_rest('/machines/hangar/vms-openvz/by-name/%s/actions/allocate' % self.vm_name,
                          method='put')
         self.assert_vm_rest(self.vm_name)
