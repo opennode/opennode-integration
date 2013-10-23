@@ -4,6 +4,7 @@ import json
 from integration_test_base import BaseIntegrationTest, IntegrationTestRestMixin
 
 class ActionsHttpRestTestCase(BaseIntegrationTest, IntegrationTestRestMixin):
+    vm_name = 'test1rest'
 
     def _check_preconditions_for_allocate(self):
         vmliststr = subprocess.check_output(['virsh', 'list', '--name', '--state-running'])
@@ -21,14 +22,15 @@ class ActionsHttpRestTestCase(BaseIntegrationTest, IntegrationTestRestMixin):
         self.assert_path('/machines/hangar', 'vms-openvz')
         self.assert_rest('/machines/hangar/vms-openvz', method='get')
         self.assert_rest('/machines/hangar/vms-openvz', method='post',
-                         data=json.dumps({'hostname': 'test1rest',
+                         data=json.dumps({'hostname': self.vm_name,
                                           'template': 'oms-test-template',
                                           'root_password': 'opennode',
                                           'root_password_repeat': 'opennode',
                                           'start_on_boot': 'false'}))
-        self.assert_rest('/machines/hangar/vms-openvz/by-name/testvm1rest/actions/allocate', method='put')
-        self.assert_vm_rest('test1rest')
-        self.assertRaises(AssertionError, self.assert_rest, '/machines/hangar/vms-openvz/by-name/test1rest',
+        self.assert_rest('/machines/hangar/vms-openvz/by-name/%s/actions/allocate' % self.vm_name,
+                         method='put')
+        self.assert_vm_rest(self.vm_name)
+        self.assertRaises(AssertionError, self.assert_rest, '/machines/hangar/vms-openvz/by-name/%s' % self.vm_name,
                           method='get')
 
     def test_deploy(self):
