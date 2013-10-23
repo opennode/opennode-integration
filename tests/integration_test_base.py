@@ -67,7 +67,7 @@ class BaseIntegrationTest(unittest.TestCase):
         self.cleanup()
 
     def ssh(self, omsh_cmd):
-        try:
+        #try:
             command_to_run = self.ssh_cmd + omsh_cmd
             logging.debug("Executing: %s " % command_to_run)
             p = subprocess.Popen(self.ssh_cmd + omsh_cmd,
@@ -80,10 +80,10 @@ class BaseIntegrationTest(unittest.TestCase):
             stdout = p.stdout.read()
             logging.debug("Stdout: %s" % stdout)
             return stdout
-        except subprocess.CalledProcessError as e:
-            assert e.returncode == 255, e.output
-            logging.debug("Stderr: %s" % e.output)
-            return e.output
+        #except subprocess.CalledProcessError as e:
+        #    assert e.returncode == 255, e.output
+        #    logging.debug("Stderr: %s (code: %d)" % (e.output, e.returncode))
+        #    return e.output
 
     def get_itemlist(self, path):
         itemlist = self.ssh(['ls', path])
