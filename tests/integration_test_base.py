@@ -77,9 +77,12 @@ class BaseIntegrationTest(unittest.TestCase):
                 raise subprocess.CalledProcessError(p.returncode, omsh_cmd, p.stdout.read())
             stderr = p.stderr.read()
             assert not stderr, stderr
-            return p.stdout.read()
+            stdout = p.stdout.read()
+            logging.debug("Stdout: %s" % stdout)
+            return stdout
         except subprocess.CalledProcessError as e:
             assert e.returncode == 255, e.output
+            logging.debug("Stderr: %s" % e.output)
             return e.output
 
     def get_itemlist(self, path):
