@@ -18,7 +18,7 @@ salt-call --local onode.vm_deploy_vm "openvz:///system" \
 	nameservers='"[]"' \
 	start_vm=True \
 	template_name="opennode-oms" \
-	uuid="$(uuidgen)" \
+	uuid="88888888-4444-4444-4444-cccccccccccc" \
 	vm_type="openvz"
 CTID=$(vzlist --all --hostname="$OMS_HOSTNAME" --no-header --output="ctid" | tail -n 1 | tr -d " ")
 vzctl start "$CTID"

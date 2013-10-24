@@ -115,6 +115,7 @@ class BaseIntegrationTest(unittest.TestCase):
 
         for item in itemlist:
             if item not in ('actions', 'by-name'):
+                logging.debug("Deleting machine %s from hangar" % (item))
                 self.ssh(['rm', '/machines/hangar/vms-openvz/%s' % (item)])
 
         mlist = self.get_itemlist('/machines/')
@@ -123,7 +124,8 @@ class BaseIntegrationTest(unittest.TestCase):
             if m not in ('actions', 'by-name', 'incoming'):
                 itemlist = self.get_itemlist('/machines/%s/vms/' % (m))
                 for item in itemlist:
-                    if item not in ('actions', 'by-name', 'oms.test'):
+                    if item not in ('actions', 'by-name', '88888888-4444-4444-4444-cccccccccccc'):
+                        logging.debug("Deleting machine %s from HN %s" % (item, m))
                         self.ssh(['rm', '/machines/%s/vms-openvz/%s' % (m, item)])
 
         vmlist = self.get_itemlist('/machines/hangar/vms-openvz/by-name/')
