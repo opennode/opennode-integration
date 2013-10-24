@@ -58,6 +58,8 @@ class IntegrationTestRestMixin(object):
 
 
 class BaseIntegrationTest(unittest.TestCase):
+    rest_vm_name = 'test1rest'
+    ssh_vm_name = 'test1ssh'
 
     def setUp(self):
         self.login = config.admin_user
@@ -131,5 +133,5 @@ class BaseIntegrationTest(unittest.TestCase):
                         self.ssh(['rm', '/machines/%s/vms-openvz/%s' % (m, item)])
 
         vmlist = self.get_itemlist('/machines/hangar/vms-openvz/by-name/')
-        assert ActionsSshTestCase.vm_name not in vmlist, 'Found \'%s\' in hangar list %s' % (ActionsSshTestCase.vm_name, vmlist)
-        self.assert_no_vm(ActionsSshTestCase.vm_name)
+        assert self.ssh_vm_name not in vmlist, 'Found \'%s\' in hangar list %s' % (self.ssh_vm_name, vmlist)
+        self.assert_no_vm(self.ssh_vm_name)
