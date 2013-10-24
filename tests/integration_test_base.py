@@ -127,7 +127,7 @@ class BaseIntegrationTest(unittest.TestCase):
             if m not in ('actions', 'by-name', 'incoming'):
                 itemlist = self.get_itemlist('/machines/%s/vms/' % (m))
                 for item in itemlist:
-                    if item not in ('actions', 'by-name', '88888888-4444-4444-4444-cccccccccccc'):
+                    if item not in ('actions', 'by-name', 'templates', '88888888-4444-4444-4444-cccccccccccc'):
                         # FIXME machine should only be removed if its hostname is not oms.test
                         # with that we can drop 'magic UUID' 888...ccc -- see above
                         logging.debug("Deleting machine %s from HN %s" % (item, m))
