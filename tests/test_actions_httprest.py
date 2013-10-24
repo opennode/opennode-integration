@@ -31,7 +31,7 @@ class ActionsHttpRestTestCase(BaseIntegrationTest, IntegrationTestRestMixin):
                                           'root_password': 'opennode',
                                           'root_password_repeat': 'opennode',
                                           'start_on_boot': 'false'}))
-        time.sleep(3) # Waiting for machine to create
+        time.sleep(9) # Waiting for machine to create
 
         vm_path = '/machines/hangar/vms-openvz/by-name/%s' % self.rest_vm_name
         self.assert_rest(vm_path + '/actions/allocate', method='put')
