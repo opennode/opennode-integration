@@ -1,5 +1,6 @@
 import subprocess
 import json
+import logging
 import unittest
 
 import config
@@ -18,7 +19,10 @@ class VisibilityTestCase(BaseIntegrationTest, IntegrationTestRestMixin):
             self.assert_vm_template(c, config.oms_template)
 
     def test_user_undeployed_vm_visibility(self):
-        self.assert_rest('/machines/by-name/ondev/vms', method='post',
+        data = self.assert_rest('/machines/by-name/?depth=1&attrs=hostname"', method='get', auth=('a', 'a'))
+        logging.debug("Machines by name: %s" % data)
+        self.assert_rest('/machines/by-name/%s/vms' % data.children[0].hostname,
+                         method='post',
                          data=json.dumps({'hostname': 'test2rest',
                                           'template': config.oms_template,
                                           'start_on_boot': False,
