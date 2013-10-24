@@ -4,6 +4,7 @@ import subprocess
 from integration_test_base import BaseIntegrationTest
 
 class ActionsSshTestCase(BaseIntegrationTest):
+    vm_name = "test1ssh"
 
     def test_id(self):
         output = self.ssh(['id'])
@@ -32,8 +33,8 @@ class ActionsSshTestCase(BaseIntegrationTest):
         self.assert_path('/machines/hangar', 'vms-openvz')
 
         self.ssh(['cd /machines/hangar/vms-openvz; '
-                  'mk compute hostname=testvm1ssh template=oms-test-template'])
-        self.assert_path('/machines/hangar/vms-openvz/by-name', 'testvm1ssh')
+                  'mk compute hostname=%s template=oms-test-template' % (self.vm_name)])
+        self.assert_path('/machines/hangar/vms-openvz/by-name', self.vm_name)
 
-        self.ssh(['/machines/hangar/vms-openvz/by-name/testvm1/actions/allocate'])
-        self.assert_vm('testvm1ssh')
+        self.ssh(['/machines/hangar/vms-openvz/by-name/%s/actions/allocate' % (self.vm_name)])
+        self.assert_vm(self.vm_name)
