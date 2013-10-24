@@ -11,3 +11,5 @@ oms_port_http = '8080'
 
 oms_hostname_ssh = 'localhost'
 oms_port_ssh = '6022'
+
+oms_template = 'oms-test-template'

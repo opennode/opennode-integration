@@ -15,7 +15,7 @@ class ActionsHttpRestTestCase(BaseIntegrationTest, IntegrationTestRestMixin):
 
         for c in vmlist:
             self.assert_vm(c)
-            self.assert_vm_template(c, 'oms-test-template')
+            self.assert_vm_template(c, config.oms_template)
 
     def test_allocate(self):
         # _check_preconditions_for_allocate() should use OMS -- virsh may be not installed
@@ -26,7 +26,7 @@ class ActionsHttpRestTestCase(BaseIntegrationTest, IntegrationTestRestMixin):
         self.assert_rest('/machines/hangar/vms-openvz', method='get')
         self.assert_rest('/machines/hangar/vms-openvz', method='post',
                          data=json.dumps({'hostname': self.vm_name,
-                                          'template': 'oms-test-template', # FIXME: read from config
+                                          'template': config.oms_template,
                                           'root_password': 'opennode',
                                           'root_password_repeat': 'opennode',
                                           'start_on_boot': 'false'}))
