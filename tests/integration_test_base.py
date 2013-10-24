@@ -123,11 +123,10 @@ class BaseIntegrationTest(unittest.TestCase):
             if m not in ('actions', 'by-name', 'incoming'):
                 itemlist = self.get_itemlist('/machines/%s/vms/' % (m))
                 for item in itemlist:
-                     # FIXME: add oms.ondev1 to list to avoid deleting oms node
-                     # Make the hostname configurable
-                    if item not in ('actions', 'by-name'):
+                    if item not in ('actions', 'by-name', 'oms.test'):
                         self.ssh(['rm', '/machines/%s/vms-openvz/%s' % (m, item)])
 
         vmlist = self.get_itemlist('/machines/hangar/vms-openvz/by-name/')
-        assert 'testvm1ssh' not in vmlist, 'Found \'%s\' in hangar list %s' % ('testvm1ssh', vmlist)
-        self.assert_no_vm('testvm1ssh')
+        assert ActionsSshTestCase.vm_name not in vmlist,
+            'Found \'%s\' in hangar list %s' % (ActionsSshTestCase.vm_name, vmlist)
+        self.assert_no_vm(ActionsSshTestCase.vm_name)
