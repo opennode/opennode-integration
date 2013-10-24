@@ -1,5 +1,6 @@
 import subprocess
 import json
+import time
 import unittest
 
 from integration_test_base import BaseIntegrationTest, IntegrationTestRestMixin
@@ -25,16 +26,16 @@ class ActionsHttpRestTestCase(BaseIntegrationTest, IntegrationTestRestMixin):
         self.assert_rest('/machines/hangar/vms-openvz', method='get')
         self.assert_rest('/machines/hangar/vms-openvz', method='post',
                          data=json.dumps({'hostname': self.vm_name,
-                                          'template': 'oms-test-template',
+                                          'template': 'oms-test-template', # FIXME: read from config
                                           'root_password': 'opennode',
                                           'root_password_repeat': 'opennode',
                                           'start_on_boot': 'false'}))
+        time.sleep(3) # Waiting for machine to create
 
-        self.assert_rest('/machines/hangar/vms-openvz/by-name/%s/actions/allocate' % self.vm_name,
-                         method='put')
+        vm_path = '/machines/hangar/vms-openvz/by-name/%s' % self.vm_name
+        self.assert_rest(vm_path + '/actions/allocate', method='put')
         self.assert_vm_rest(self.vm_name)
-        self.assertRaises(AssertionError, self.assert_rest, '/machines/hangar/vms-openvz/by-name/%s' % self.vm_name,
-                          method='get')
+        self.assertRaises(AssertionError, self.assert_rest, vm_path, method='get')
 
     @unittest.skip('TODO: write deployment integration test!')
     def test_deploy(self):
