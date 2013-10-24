@@ -19,7 +19,7 @@ class VisibilityTestCase(BaseIntegrationTest, IntegrationTestRestMixin):
             self.assert_vm_template(c, config.oms_template)
 
     def test_user_undeployed_vm_visibility(self):
-        data = self.assert_rest('/machines/by-name/?depth=1&attrs=hostname"', method='get', auth=('a', 'a'))
+        data = self.assert_rest('/machines/by-name/?depth=1&attrs=hostname', method='get', auth=('a', 'a'))
         logging.debug("Machines by name: %s" % data)
         self.assert_rest('/machines/by-name/%s/vms' % data['children'][0]['hostname'],
                          method='post',
