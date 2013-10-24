@@ -125,10 +125,11 @@ class BaseIntegrationTest(unittest.TestCase):
                 itemlist = self.get_itemlist('/machines/%s/vms/' % (m))
                 for item in itemlist:
                     if item not in ('actions', 'by-name', '88888888-4444-4444-4444-cccccccccccc'):
+                        # FIXME machine should only be removed if its hostname is not oms.test
+                        # with that we can drop 'magic UUID' 888...ccc -- see above
                         logging.debug("Deleting machine %s from HN %s" % (item, m))
                         self.ssh(['rm', '/machines/%s/vms-openvz/%s' % (m, item)])
 
         vmlist = self.get_itemlist('/machines/hangar/vms-openvz/by-name/')
-        assert ActionsSshTestCase.vm_name not in vmlist,
-            'Found \'%s\' in hangar list %s' % (ActionsSshTestCase.vm_name, vmlist)
+        assert ActionsSshTestCase.vm_name not in vmlist, 'Found \'%s\' in hangar list %s' % (ActionsSshTestCase.vm_name, vmlist)
         self.assert_no_vm(ActionsSshTestCase.vm_name)
