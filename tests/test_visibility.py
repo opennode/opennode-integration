@@ -27,15 +27,22 @@ class VisibilityTestCase(BaseIntegrationTest, IntegrationTestRestMixin):
         self.assert_no_vm_rest('test2rest', auth=('b', 'b'))
 
     def test_user_hangar_vm_visibility(self):
+        # Admin can create new backend
         self.assert_rest('/machines/hangar', method='post',
                          data=json.dumps({'backend': 'openvz'}),
                          auth=self.auth)
         self.assert_path('/machines/hangar', 'vms-openvz')
-        self.assert_rest('/machines/hangar/vms-openvz', method='get', auth=self.auth)
+
+        # Unprivileged user can view backend
+        self.assert_rest('/machines/hangar/vms-openvz', method='get', auth=('a', 'a'))
+
+        # Admin can create new machines
         self.assert_rest('/machines/hangar/vms-openvz', method='post',
                          data=json.dumps({'hostname': 'test3rest',
                                           'template': config.oms_template,
                                           'root_password': 'opennode',
                                           'root_password_repeat': 'opennode',
-                                          'start_on_boot': 'false'}), auth=('a', 'a'))
-        self.assert_no_hangar_compute_rest('test3rest', auth=('b', 'b'))
+                                          'start_on_boot': 'false'}), auth=self.auth)
+
+        # Unprivileged user cannot view machines created by admin
+        self.assert_no_hangar_compute_rest('test3rest', auth=('a', 'a'))
