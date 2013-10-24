@@ -46,6 +46,8 @@ class IntegrationTestRestMixin(object):
         r = requests.get('http://%s/machines/hangar/by-name/%s?depth=1&attrs=hostname'
                          % (self.host, compute),
                          auth=(auth or getattr(self, 'auth')))
+        logging.debug("Resonse HTTP status: %d" % r.status_code)
+        logging.debug("Resonse JSON: %d" % r.json())
         assert r.status_code is 404, 'Compute %s is visible in hangar!' % (compute)
 
     def assert_vm_template_rest(self, compute, template, auth=None):
