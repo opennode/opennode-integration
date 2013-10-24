@@ -1,16 +1,26 @@
 #!/bin/sh -ex
 #
 # Sets up test environment.
-#
-# *** THI SCRIPT IS TO BE RUN MANUALLY ***
 
-OMS_HOSTNAME="192.168.1.85"
+OMS_HOSTNAME="oms.test"
+OMS_IP="192.168.1.85"
+CTID="842"
 
 # Create OMS instance
-# FIXME: Need to automate this (TUI-128)
-opennode
-
-CTID=$(vzlist --hostname="oms.*" --no-header --output="ctid" | tr -d " ")
+# FIXME ctid param not working
+# FIXME start_vm param not working
+salt-call --local onode.vm_deploy_vm "openvz:///system" \
+	ctid="$CTID" \
+	hostname="$OMS_HOSTNAME" \
+	ip_address="$OMS_IP" \
+	memory="2.0" \
+	nameservers='"[]"' \
+	start_vm=True \
+	template_name="opennode-oms" \
+	uuid="$(uuidgen)" \
+	vm_type="openvz"
+CTID=$(vzlist --all --hostname="$OMS_HOSTNAME" --no-header --output="ctid" | tr -d " ")
+vzctl start "$CTID"
 
 # Configure OMS
 vzctl exec "$CTID" "/opt/oms/update.sh"
@@ -25,7 +35,7 @@ vzctl exec "$CTID" salt-key --list-all
 vzctl exec "$CTID" salt-key --delete-all --yes
 
 # Register HN in OMS
-opennode --register --oms_hostname "$OMS_HOSTNAME"
+opennode --register --oms-hostname "$OMS_IP"
 vzctl exec "$CTID" salt-key --accept-all
 vzctl exec "$CTID" salt-key --list-all
 
