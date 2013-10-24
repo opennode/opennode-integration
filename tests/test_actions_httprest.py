@@ -3,6 +3,8 @@ import json
 import time
 import unittest
 
+import config
+
 from integration_test_base import BaseIntegrationTest, IntegrationTestRestMixin
 
 class ActionsHttpRestTestCase(BaseIntegrationTest, IntegrationTestRestMixin):
