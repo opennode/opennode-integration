@@ -1,6 +1,5 @@
 import subprocess
 import json
-import logging
 import time
 import unittest
 
@@ -18,17 +17,12 @@ class ActionsHttpRestTestCase(BaseIntegrationTest, IntegrationTestRestMixin):
             self.assert_vm(c)
             self.assert_vm_template(c, config.oms_template)
 
-    def _list_templates(self):
-        itemlist = self.get_itemlist('/templates')
-        logging.debug("Available templates: %s" % itemlist)
-
-    def test_allocate(self):
+    def test_allocate_rest(self):
         # _check_preconditions_for_allocate() should use OMS -- virsh may be not installed
         #self._check_preconditions_for_allocate()
         self.assert_rest('/machines/hangar', method='post', data=json.dumps({'backend': 'openvz'}),
                          auth=self.auth)
         self.assert_path('/machines/hangar', 'vms-openvz')
-        self._list_templates()
 
         self.assert_rest('/machines/hangar/vms-openvz', method='get')
         self.assert_rest('/machines/hangar/vms-openvz', method='post',
@@ -38,11 +32,9 @@ class ActionsHttpRestTestCase(BaseIntegrationTest, IntegrationTestRestMixin):
                                           'root_password_repeat': 'opennode',
                                           'start_on_boot': 'false'}))
         time.sleep(3) # Waiting for machine to create
-        self._list_templates()
 
         vm_path = '/machines/hangar/vms-openvz/by-name/%s' % self.rest_vm_name
         self.assert_rest(vm_path + '/actions/allocate', method='put')
-        self._list_templates()
 
         self.assert_vm_rest(self.rest_vm_name)
         self.assertRaises(AssertionError, self.assert_rest, vm_path, method='get')

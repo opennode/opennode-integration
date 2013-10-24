@@ -24,7 +24,7 @@ class ActionsSshTestCase(BaseIntegrationTest):
             self.assert_vm(c)
             self.assert_vm_template(c, 'oms-test-template')
 
-    def test_allocate(self):
+    def test_allocate_ssh(self):
         # _check_preconditions_for_allocate() should use OMS -- virsh may be not installed
         #self._check_preconditions_for_allocate()
         self.ssh(['cd /machines/hangar; mk virtualizationcontainer backend=openvz'])
