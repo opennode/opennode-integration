@@ -1,6 +1,8 @@
 import subprocess
 import json
 
+import config
+
 from integration_test_base import BaseIntegrationTest, IntegrationTestRestMixin
 
 class VisibilityTestCase(BaseIntegrationTest, IntegrationTestRestMixin):
@@ -12,12 +14,12 @@ class VisibilityTestCase(BaseIntegrationTest, IntegrationTestRestMixin):
 
         for c in vmlist:
             self.assert_vm(c)
-            self.assert_vm_template(c, 'oms-test-template')
+            self.assert_vm_template(c, config.oms_template)
 
     def test_user_undeployed_vm_visibility(self):
         self.assert_rest('/machines/by-name/ondev/vms', method='post',
                          data=json.dumps({'hostname': 'test2rest',
-                                          'template': 'oms-test-template',
+                                          'template': config.oms_template,
                                           'start_on_boot': False,
                                           'root_password': 'a',
                                           'root_password_repeat': 'a'}),
@@ -32,7 +34,7 @@ class VisibilityTestCase(BaseIntegrationTest, IntegrationTestRestMixin):
         self.assert_rest('/machines/hangar/vms-openvz', method='get', auth=self.auth)
         self.assert_rest('/machines/hangar/vms-openvz', method='post',
                          data=json.dumps({'hostname': 'test3rest',
-                                          'template': 'oms-test-template',
+                                          'template': config.oms_template,
                                           'root_password': 'opennode',
                                           'root_password_repeat': 'opennode',
                                           'start_on_boot': 'false'}), auth=('a', 'a'))

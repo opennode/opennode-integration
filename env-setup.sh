@@ -25,6 +25,7 @@ vzctl start "$CTID"
 
 echo "[+] Configuring and updating OMS..."
 vzctl exec "$CTID" "/opt/oms/update.sh"
+cp "/root/logging.conf" "/vz/private/$CTID/etc/opennode/logging.conf"
 cp "/root/jenkins-id_rsa.pub" "/vz/private/$CTID/etc/opennode/authorized_keys"
 sed -i 's/\[auth\]/\[auth\]\nuse_inmemory_pkcheck = True/' "/vz/private/$CTID/etc/opennode/opennode-oms.conf"
 vzctl exec "$CTID" "/opt/oms/update.sh"
