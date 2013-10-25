@@ -4,7 +4,6 @@ import subprocess
 from integration_test_base import BaseIntegrationTest
 
 class ActionsSshTestCase(BaseIntegrationTest):
-
     def test_id(self):
         output = self.ssh(['id'])
         lines = output.splitlines()
@@ -25,15 +24,15 @@ class ActionsSshTestCase(BaseIntegrationTest):
             self.assert_vm(c)
             self.assert_vm_template(c, 'oms-test-template')
 
-    def test_allocate(self):
+    def test_allocate_ssh(self):
         # _check_preconditions_for_allocate() should use OMS -- virsh may be not installed
         #self._check_preconditions_for_allocate()
         self.ssh(['cd /machines/hangar; mk virtualizationcontainer backend=openvz'])
         self.assert_path('/machines/hangar', 'vms-openvz')
 
         self.ssh(['cd /machines/hangar/vms-openvz; '
-                  'mk compute hostname=testvm1ssh template=oms-test-template'])
-        self.assert_path('/machines/hangar/vms-openvz/by-name', 'testvm1ssh')
+                  'mk compute hostname=%s template=oms-test-template' % (self.ssh_vm_name)])
+        self.assert_path('/machines/hangar/vms-openvz/by-name', self.ssh_vm_name)
 
-        self.ssh(['/machines/hangar/vms-openvz/by-name/testvm1/actions/allocate'])
-        self.assert_vm('testvm1ssh')
+        self.ssh(['/machines/hangar/vms-openvz/by-name/%s/actions/allocate' % (self.ssh_vm_name)])
+        self.assert_vm(self.ssh_vm_name)

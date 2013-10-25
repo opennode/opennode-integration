@@ -11,3 +11,5 @@ oms_port_http = '${OMS_PORT_HTTP}'
 
 oms_hostname_ssh = '${OMS_HOSTNAME_SSH}'
 oms_port_ssh = '${OMS_PORT_SSH}'
+
+oms_template = '${OMS_TEMPLATE}'

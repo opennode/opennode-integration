@@ -46,7 +46,8 @@ class IntegrationTestRestMixin(object):
         r = requests.get('http://%s/machines/hangar/by-name/%s?depth=1&attrs=hostname'
                          % (self.host, compute),
                          auth=(auth or getattr(self, 'auth')))
-        assert r.status_code is 404, 'Compute %s is visible in hangar!' % (compute)
+        logging.debug("Resonse HTTP status: %d" % r.status_code)
+        assert r.status_code == 404, 'Compute %s is visible in hangar!' % (compute)
 
     def assert_vm_template_rest(self, compute, template, auth=None):
         r = requests.get('%s/machines/by-name/%s/templates/by-name/%s' %
@@ -58,6 +59,8 @@ class IntegrationTestRestMixin(object):
 
 
 class BaseIntegrationTest(unittest.TestCase):
+    rest_vm_name = 'test1rest'
+    ssh_vm_name = 'test1ssh'
 
     def setUp(self):
         self.login = config.admin_user
@@ -115,6 +118,7 @@ class BaseIntegrationTest(unittest.TestCase):
 
         for item in itemlist:
             if item not in ('actions', 'by-name'):
+                logging.debug("Deleting machine %s from hangar" % (item))
                 self.ssh(['rm', '/machines/hangar/vms-openvz/%s' % (item)])
 
         mlist = self.get_itemlist('/machines/')
@@ -123,9 +127,12 @@ class BaseIntegrationTest(unittest.TestCase):
             if m not in ('actions', 'by-name', 'incoming'):
                 itemlist = self.get_itemlist('/machines/%s/vms/' % (m))
                 for item in itemlist:
-                    if item not in ('actions', 'by-name'):
+                    if item not in ('actions', 'by-name', 'templates', '88888888-4444-4444-4444-cccccccccccc'):
+                        # FIXME machine should only be removed if its hostname is not oms.test
+                        # with that we can drop 'magic UUID' 888...ccc -- see above
+                        logging.debug("Deleting machine %s from HN %s" % (item, m))
                         self.ssh(['rm', '/machines/%s/vms-openvz/%s' % (m, item)])
 
         vmlist = self.get_itemlist('/machines/hangar/vms-openvz/by-name/')
-        assert 'testvm1ssh' not in vmlist, 'Found \'%s\' in hangar list %s' % ('testvm1ssh', vmlist)
-        self.assert_no_vm('testvm1ssh')
+        assert self.ssh_vm_name not in vmlist, 'Found \'%s\' in hangar list %s' % (self.ssh_vm_name, vmlist)
+        self.assert_no_vm(self.ssh_vm_name)
