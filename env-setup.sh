@@ -1,6 +1,7 @@
 #!/bin/sh -e
 #
-# Sets up test environment.
+# Creates and sets up OMS machine test environment.
+# Registers current machine (the one script is launched on) as HN in OMS.
 
 OMS_HOSTNAME="oms.test"
 OMS_IP="192.168.1.85"
