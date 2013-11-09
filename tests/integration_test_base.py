@@ -8,18 +8,23 @@ import config
 
 httplib.HTTPConnection.debuglevel = 1
 
+
 class IntegrationTestRestMixin(object):
+
+    def assert_rest_request_succeeded(self, request):
+        request.raise_for_status()
+        data = request.json()
+        logging.debug("Response JSON: %s" % data)
+
+        if 'success' in data:
+            self.assertEqual(True, data['success'])
 
     def assert_rest(self, path, method='get', data=None, auth=None):
         method = getattr(requests, method)
         r = method('http://%s%s' % (self.host, path), data=data,
                    auth=(auth or getattr(self, 'auth', None)))
-        r.raise_for_status()
-        data = r.json()
-        logging.debug("Response JSON: %s" % data)
-        if 'success' in data:
-            self.assertEqual(True, data['success'])
-        return data
+        self.assert_rest_request_succeeded(r)
+        return r
 
     def assert_vm_rest(self, compute, auth=None):
         r = requests.get('http://%s/computes/by-name/%s?depth=1&attrs=hostname' % (self.host, compute),
