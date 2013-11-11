@@ -37,3 +37,14 @@ class HttpRestPathHandlingTestCase(BaseIntegrationTest, IntegrationTestRestMixin
 
         control_request = requests.get('http://%s/proc' % self.host, params={'security_token': token})
         self.assert_rest_request_succeeded(control_request)
+
+    def test_basic_auth_yields_a_single_token(self):
+        r = self.assert_rest('/auth?basic_auth=true', auth=self.auth)
+        # r = requests.get('http://%s/auth' % self.host, auth=self.auth)
+
+        header_tokens = r.headers['x-oms-security-token'].split(',')
+        self.assertEqual(1, len(header_tokens), 'A single security token header expected')
+
+        # Set-Cookie headers must be parsed manually here since requests merges them
+        cookie_tokens = [h for h in r.headers['set-cookie'].split(',') if h.startswith('oms_auth_token')]
+        self.assertEqual(1, len(cookie_tokens), 'A single security cookie expected')
